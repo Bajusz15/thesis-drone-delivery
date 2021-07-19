@@ -1,0 +1,38 @@
+syntax="proto3";
+package telemetry_grpc;
+option go_package="./protobuf";
+option java_outer_classname = "protobuf";
+
+import "google/protobuf/timestamp.proto";
+
+message GPS {
+  double latitude = 1;
+  double longitude = 2;
+}
+
+message Telemetry {
+  double speed = 1;
+  GPS location = 2;
+  double altitude = 3;
+  double bearing = 4;
+  double acceleration = 5;
+  int32 battery_level= 6;
+  int32 battery_temperature= 7;
+  repeated int32 motor_temperatures = 8;
+  repeated int32 errors = 9;
+  google.protobuf.Timestamp time_stamp = 10;
+  int32 drone_id = 11;
+}
+message TelemetryDataRequest {
+  Telemetry telemetry = 2;
+}
+
+
+message TelemetryDataResponse {
+  string result = 1;
+}
+
+service TelemetryService {
+  //Client streaming
+  rpc TelemetryStream(stream TelemetryDataRequest) returns (TelemetryDataResponse) {};
+}

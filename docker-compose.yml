@@ -1,0 +1,81 @@
+version: '3'
+services:
+#  redis:
+#    image: 'redis:latest'
+#  postgres:
+#    build:
+#      dockerfile: Dockerfile
+#      context: backend/databases/postgres
+#    ports:
+#    - '5432:5432'
+#    environment:
+#      - POSTGRES_PASSWORD=postgres
+#      - POSTGRES_HOST_AUTH_METHOD=trust
+#  mongodb:
+#    build:
+#      context: backend/databases/mongodb
+#      dockerfile: Dockerfile
+#    container_name: 'mongo-database'
+#    environment:
+#      - MONGO_INITDB_DATABASE=admin
+#      - MONGO_INITDB_ROOT_USERNAME=admin-user
+#      - MONGO_INITDB_ROOT_PASSWORD=admin-password
+##    volumes:
+##    - './backend/databases/mongodb/db:/data/db'
+#    ports:
+#    - '27017-27019:27017-27019'
+  server:
+    build:
+      dockerfile: Dockerfile
+      context: backend/server
+#    depends_on:
+#      - mongodb
+#      - postgres
+    ports:
+    - '5000:5000'
+    - '50051:50051'
+    environment:
+      - PGPORT=5432
+      - PGDATABASE=dbdrone_delivery
+      - PGPASSWORD=postgres
+      - PGUSER=postgres
+      - PGHOST=host.docker.internal
+#      - PGUSER=postgres
+#      - PGHOST=host.docker.internal
+#      - PGDATABASE=postgres
+#      - PGPASSWORD=postgres
+#      todo: itt majd lesz több adatbázis is, mert ugye össze kell hasonlítani
+      - DRONE_SWARM_URL=http://drone-swarm:2000
+      - MONGO_USER=drone-user
+      - MONGO_DB=drone_delivery
+      - MONGO_HOST=host.docker.internal
+      - MONGO_PORT=27017
+      - MONGO_PWD=drone-pwd
+      - GRPC_GO_REQUIRE_HANDSHAKE=off
+      - GRPC_GO_LOG_VERBOSITY_LEVEL=99
+      - GRPC_GO_LOG_SEVERITY_LEVEL=info
+  drone-swarm:
+    build:
+      dockerfile: drone-swarm/Dockerfile
+      context: ./backend
+    depends_on:
+      - server
+    ports:
+    - '2000:2000'
+    environment:
+      - SERVER_DOMAIN=http://server
+      - SERVER_PORT=5000
+      - SERVER_GRPC_DOMAIN=server
+      - SERVER_GRPC_PORT=50051
+      - GRPC_GO_LOG_VERBOSITY_LEVEL=99
+      - GRPC_GO_LOG_SEVERITY_LEVEL=info
+      - GRPC_GO_REQUIRE_HANDSHAKE=off
+    restart: on-failure
+#    dns_search: .
+#  configurator:
+#    build:
+#      dockerfile: Dockerfile
+#      context: backend/configurator
+#    depends_on:
+#      - drone-swarm
+#      - server
