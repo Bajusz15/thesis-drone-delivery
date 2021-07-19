@@ -5,7 +5,7 @@ This file contains instructions on setting up the drone-deliver simulation.
 ## Usage
 
 **1) Check if your directory structure looks like the following:**
-+ drone-delivery
++ thesis-drone-delivery
     - backend
         - databases
         - server
@@ -15,7 +15,7 @@ This file contains instructions on setting up the drone-deliver simulation.
     - docker-compose.yml
     -   README.md
 
-**2) Go into the drone-delivery and start the project.**
+**2) Go into the root of the project and start the project.**
 + On the very first time you start this
 
   Make sure you have PostgreSQL installed, and running on your machine.
